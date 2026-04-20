@@ -1,0 +1,124 @@
+@host = http://localhost:3000
+
+### 1. GET all accounts
+GET {{host}}/api/accounts
+Accept: application/json
+
+> {%
+    client.test("GET all accounts - status 200", function () {
+        client.assert(response.status === 200);
+    });
+
+    client.test("Response is array", function () {
+        client.assert(Array.isArray(response.body));
+    });
+%}
+
+### 2. Create new account
+POST {{host}}/api/accounts
+Content-Type: application/json
+
+{
+  "accountNumber": 2000,
+  "name": "Test User",
+  "balance": 1000,
+  "currency": "USD"
+}
+
+> {%
+    client.test("Account created - status 201", function () {
+        client.assert(response.status === 201);
+    });
+
+    client.test("Account balance correct", function () {
+        client.assert(response.body.balance === 1000);
+    });
+%}
+
+### 3. GET created account
+GET {{host}}/api/accounts/2000
+Accept: application/json
+
+> {%
+    client.test("GET account - status 200", function () {
+        client.assert(response.status === 200);
+    });
+
+    client.test("Correct account returned", function () {
+        client.assert(response.body.accountNumber === 2000);
+    });
+%}
+
+### 4. PUT update account
+PUT {{host}}/api/accounts/2000
+Content-Type: application/json
+
+{
+  "name": "Updated User",
+  "balance": 1200
+}
+
+> {%
+    client.test("Account updated - status 200", function () {
+        client.assert(response.status === 200);
+    });
+
+    client.test("Balance updated correctly", function () {
+        client.assert(response.body.balance === 1200);
+    });
+%}
+
+### 5. Deposit money
+PATCH {{host}}/api/accounts/2000
+Content-Type: application/json
+
+{
+  "amount": 300
+}
+
+> {%
+    client.test("Deposit success - status 200", function () {
+        client.assert(response.status === 200);
+    });
+
+    client.test("Balance increased", function () {
+        client.assert(response.body.balance === 1500);
+    });
+%}
+
+### 6. Withdraw money
+PATCH {{host}}/api/accounts/2000
+Content-Type: application/json
+
+{
+  "amount": -200
+}
+
+> {%
+    client.test("Withdraw success - status 200", function () {
+        client.assert(response.status === 200);
+    });
+
+    client.test("Balance decreased", function () {
+        client.assert(response.body.balance === 1300);
+    });
+%}
+
+### 7. DELETE account
+DELETE {{host}}/api/accounts/2000
+
+> {%
+    client.test("Delete success - status 200", function () {
+        client.assert(response.status === 200);
+    });
+%}
+
+### 8. Verify account deleted
+GET {{host}}/api/accounts/2000
+Accept: application/json
+
+> {%
+    client.test("Account not found after delete", function () {
+        client.assert(response.status === 404);
+    });
+%}

@@ -1,0 +1,72 @@
+### Get Welcome Message
+GET {{host}}/
+
+### Add Student
+POST {{host}}/api/students
+Content-Type: application/json
+
+{
+  "name": "Alice Smith",
+  "email": "alice999@example.com"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.global.set("student_id", response.body.id);
+});
+%}
+
+### Get All Students
+GET {{host}}/api/students
+
+### Add Course
+POST {{host}}/api/courses
+Content-Type: application/json
+
+{
+  "course_name": "Web Development",
+  "instructor": "Dr. Brown",
+  "credit_hours": 4
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.global.set("course_id", response.body.id);
+});
+%}
+
+### Enroll Student in Course
+POST {{host}}/api/enrollments
+Content-Type: application/json
+
+{
+  "student_id": {{student_id}},
+  "course_id": {{course_id}}
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.global.set("enrollment_id", response.body.id);
+});
+%}
+
+### Update Grades
+PUT {{host}}/api/enrollments/{{enrollment_id}}/grades
+Content-Type: application/json
+
+{
+  "assignment1": 90,
+  "assignment2": 85,
+  "midterm_exam": 80,
+  "final_exam": 88,
+  "final_project": 95
+}
+
+### Get Final Grade
+GET {{host}}/api/enrollments/{{enrollment_id}}/final-grade
+
+### Delete Student
+DELETE {{host}}/api/students/{{student_id}}
