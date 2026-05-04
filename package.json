@@ -4,8 +4,12 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "start:comment": "node src/comment_assignment/server.js",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:api": "jest src/comment_assignment/tests/api.test.js --coverage --coverageDirectory=coverage/comment_assignment",
+    "test:e2e": "cypress run --project src/comment_assignment",
+    "test:load": "cd src/comment_assignment && artillery run load-test.yml"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -18,6 +22,8 @@
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {
+    "artillery": "^2.0.31",
+    "cypress": "^15.14.2",
     "jest": "^30.3.0",
     "supertest": "^7.2.2"
   }

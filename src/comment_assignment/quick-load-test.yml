@@ -1,0 +1,23 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 10
+      arrivalRate: 2
+      name: Quick check
+  payload:
+    path: "comments_payload.csv"
+    fields:
+      - "post_id"
+      - "author"
+      - "content"
+scenarios:
+  - name: "Fetch and post comments"
+    flow:
+      - get:
+          url: "/api/comments"
+      - post:
+          url: "/api/comments"
+          json:
+            post_id: "{{ post_id }}"
+            author: "{{ author }}"
+            content: "{{ content }}"

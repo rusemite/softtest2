@@ -1,0 +1,32 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: Warm up
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 50
+      name: Ramp up load
+    - duration: 60
+      arrivalRate: 50
+      name: Sustained load
+  payload:
+    path: "comments_payload.csv"
+    fields:
+      - "post_id"
+      - "author"
+      - "content"
+scenarios:
+  - name: "Fetch and post comments"
+    flow:
+      - get:
+          url: "/api/comments"
+      - post:
+          url: "/api/comments"
+          json:
+            post_id: "{{ post_id }}"
+            author: "{{ author }}"
+            content: "{{ content }}"
+      - get:
+          url: "/api/comments/{{ $randomNumber(1, 10) }}"
